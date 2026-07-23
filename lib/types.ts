@@ -1,6 +1,7 @@
 export interface Car {
   slug: string;
   name: string;
+  image: string;
   shortName: string;
   chassisCode: string;
   engineCode: string;
