@@ -2761,7 +2761,6 @@ export const cars: Car[] = [
   {
     slug: "autozam-az1",
     name: "Autozam AZ-1",
-    image: "/images/autozam-az1",
     shortName: "AZ-1",
     chassisCode: "PG6SA",
     engineCode: "F6A",
