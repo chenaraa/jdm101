@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getAllCars, getCarBySlug, getCarsByManufacturer } from "@/lib/cars";
 import { CarCard } from "@/components/CarCard";
 
@@ -15,6 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const car = getCarBySlug(slug);
+
   if (!car) return {};
 
   const title = `${car.name} — Specs, History & Buying Guide`;
@@ -28,9 +30,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: "article",
-      url: `/cars/${car.slug}`
+      url: `/cars/${car.slug}`,
     },
-    keywords: [car.name, car.chassisCode, car.engineCode, car.manufacturer, ...car.tags]
+    keywords: [
+      car.name,
+      car.chassisCode,
+      car.engineCode,
+      car.manufacturer,
+      ...car.tags,
+    ],
   };
 }
 
@@ -45,7 +53,7 @@ function SpecRow({ label, value }: { label: string; value: string }) {
 
 function Section({
   title,
-  children
+  children,
 }: {
   title: string;
   children: React.ReactNode;
@@ -65,6 +73,7 @@ function Section({
 export default async function CarDetailPage({ params }: Props) {
   const { slug } = await params;
   const car = getCarBySlug(slug);
+
   if (!car) notFound();
 
   const related = getCarsByManufacturer(car.manufacturer)
@@ -79,12 +88,11 @@ export default async function CarDetailPage({ params }: Props) {
     vehicleEngine: car.engine,
     driveWheelConfiguration: car.drivetrain,
     productionDate: car.years,
-    description: car.overview
+    description: car.overview,
   };
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12">
-      {/* eslint-disable-next-line react/no-danger */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -102,16 +110,25 @@ export default async function CarDetailPage({ params }: Props) {
         <p className="font-mono text-redline-bright text-sm uppercase tracking-widest mb-2">
           {car.manufacturer} &middot; {car.chassisCode}
         </p>
+
         <h1 className="font-display text-3xl sm:text-5xl font-semibold text-chalk">
           {car.name}
         </h1>
-        <p className="mt-4 text-lg text-chalk-dim max-w-3xl">{car.overview}</p>
+
+        <p className="mt-4 text-lg text-chalk-dim max-w-3xl">
+          {car.overview}
+        </p>
       </div>
 
-      <div className="aspect-[16/9] w-full rounded-lg spec-plate flex items-center justify-center mb-10">
-        <span className="font-display text-4xl text-chalk-dim/20 uppercase tracking-widest">
-          {car.name}
-        </span>
+      {/* Car Image */}
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg spec-plate mb-10">
+        <Image
+          src={car.image || `/images/cars/${car.slug}.png`}
+          alt={car.name}
+          fill
+          className="object-contain"
+          priority
+        />
       </div>
 
       {/* Spec plate */}
@@ -119,6 +136,7 @@ export default async function CarDetailPage({ params }: Props) {
         <h2 className="font-display text-lg uppercase tracking-wide text-chalk mb-4">
           Spec Sheet
         </h2>
+
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
           <div>
             <SpecRow label="Generation / Chassis Code" value={car.chassisCode} />
@@ -128,6 +146,7 @@ export default async function CarDetailPage({ params }: Props) {
             <SpecRow label="Body Style" value={car.bodyStyle} />
             <SpecRow label="Engine" value={car.engine} />
           </div>
+
           <div>
             <SpecRow label="Horsepower" value={car.horsepower} />
             <SpecRow label="Torque" value={car.torque} />
@@ -203,6 +222,7 @@ export default async function CarDetailPage({ params }: Props) {
           <h2 className="font-display text-xl sm:text-2xl font-semibold text-chalk mb-6">
             More from {car.manufacturer}
           </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {related.map((c) => (
               <CarCard key={c.slug} car={c} />
