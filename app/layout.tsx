@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Oswald, Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -68,6 +69,20 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} font-body bg-graphite-950 text-chalk antialiased`}
       >
+        <Script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=G-C2R0MXNHB1"
+/>
+
+<Script id="google-analytics">
+  {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-C2R0MXNHB1');
+  `}
+</Script>
         <div className="relative min-h-screen flex flex-col">
           <SiteHeader />
           <main className="flex-1">{children}</main>
