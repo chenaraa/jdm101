@@ -83,6 +83,19 @@ export default function RootLayout({
     gtag('config', 'G-C2R0MXNHB1');
   `}
 </Script>
+        <Script
+  id="organization-schema"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "JDM101",
+      url: "https://jdm101.com",
+      logo: "https://jdm101.com/logo.png",
+    }),
+  }}
+/>
         <div className="relative min-h-screen flex flex-col">
           <SiteHeader />
           <main className="flex-1">{children}</main>
